@@ -1,0 +1,2 @@
+SCREEN_SIZE = (860, 480)
+FPS = 30
