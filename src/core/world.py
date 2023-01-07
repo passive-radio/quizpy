@@ -15,10 +15,11 @@ class World():
         self.curernt_scene = "start_menu"
         self.current_quiz_num = 0
     
-    def add_question_df(self, question_df):
-        self.question_df = question_df
-        self.len_quiz = len(self.question_df.content)
-        print(self.question_df)
+    def add_quiz_df(self, quiz_df):
+        self.quiz_df = quiz_df
+        self.quiz_df.origin_content = self.quiz_df.content.copy()
+        self.len_quiz = len(self.quiz_df.content)
+        print(self.quiz_df)
         
     def add_scene_manager(self, scene_manager):
         self.scene_manager = scene_manager
@@ -44,6 +45,9 @@ class World():
             self.window.blit(message_state, (config.SCREEN_SIZE[0]-80, 100))
         except:
             pass
+        
+        if self.current_quiz_num >= self.len_quiz:
+            self.current_scene = "result_scene"
 
         pygame.display.update()
     
@@ -87,13 +91,15 @@ class World():
     
     def _update_quiz(self):
         self.current_quiz_num += 1
-        self._next_quiz_index = random.randint(0, len(self.question_df.content)-1)
-        self.next_quiz = self.question_df.content.iloc[self._next_quiz_index]
-        self.question_df.content = self.question_df.content.drop(index=[self._next_quiz_index]).reset_index(drop=True)
+        self._next_quiz_index = random.randint(0, len(self.quiz_df.content)-1)
+        self.next_quiz = self.quiz_df.content.iloc[self._next_quiz_index]
+        self.quiz_df.content = self.quiz_df.content.drop(index=[self._next_quiz_index]).reset_index(drop=True)
         
     
-    def main_menu(self):
+    def show_start_screen(self):
         
+        self.quiz_df.content = self.quiz_df.origin_content.copy()
+        self.current_quiz_num = 0
         self.window.fill((255,255,255))
         message = self.font.render("エンターキーを押して!", True, (10,10,10))
         message_goto_menu = self.font.render("Ecsキーを押してメニューに戻る", True, 16)
@@ -121,11 +127,32 @@ class World():
         pygame.display.flip()
         pygame.display.update()
         
+    def show_result(self):
+        for event in pygame.event.get():
+                print(event, "in show_result")
+                if event.type == pygame.QUIT:
+                    self.running = False
+                elif event.type == pygame.KEYDOWN:
+                    print("Pressed key:", event.key)
+                    if event.key == pygame.K_ESCAPE:
+                        self.current_scene = "start_menu"
+                    elif event.key == pygame.K_RETURN:
+                        running = False
+        self.window.fill((255,255,255))
+        message = self.font.render("終了！", True, (10,10,10))
+        message_pos = message.get_rect(center = (config.SCREEN_SIZE[0]//2, config.SCREEN_SIZE[1]//2))
+        self.window.blit(message, message_pos)
+        pygame.display.flip()
+        pygame.display.update()
+
+        
     def process(self):
         if self.current_scene == "play_scene":
             self.handle_event()
             self.update_quiz()
 
         elif self.current_scene == "start_menu":
-            self.main_menu()
-            
+            self.show_start_screen()
+        
+        elif self.current_scene == "result_scene":
+            self.show_result()

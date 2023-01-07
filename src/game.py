@@ -19,7 +19,7 @@ def init():
     world = World()
     world.add_window(window)
     question_df = load_db("../data/qa.csv")
-    world.add_question_df(question_df)
+    world.add_quiz_df(question_df)
     world.add_scene_manager(SceneManager(world))
     world.current_scene = "start_menu"
     return world, window
