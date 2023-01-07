@@ -28,7 +28,7 @@ def load_db(filepath: str) -> QuestionDataFrame:
                     question.choices = [row[3], row[4], row[5], row[6]]
                     question.answer = ord(row[2].lower()) - 96
                 arr_question.append([question.id, question.question, question.answer, question.type, question.choices, question])
-        question_df = QuestionDataFrame(pd.DataFrame(arr_question, columns=arr_question[0]))
+        question_df = QuestionDataFrame(pd.DataFrame(arr_question[1:], columns=arr_question[0]))
     return question_df
 
 if __name__ == "__main__":
