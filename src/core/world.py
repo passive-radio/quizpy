@@ -15,11 +15,11 @@ class World():
         self.curernt_scene = "start_menu"
         self.current_quiz_num = 0
     
-    def add_quiz_df(self, quiz_df):
-        self.quiz_df = quiz_df
-        self.quiz_df.origin_content = self.quiz_df.content.copy()
-        self.len_quiz = len(self.quiz_df.content)
-        print(self.quiz_df)
+    def add_quiz_data(self, quiz_data):
+        self.quiz_data = quiz_data
+        self.quiz_data.origin_content = self.quiz_data.content.copy()
+        self.len_quiz = len(self.quiz_data.content)
+        print(self.quiz_data)
         
     def add_scene_manager(self, scene_manager):
         self.scene_manager = scene_manager
@@ -27,8 +27,11 @@ class World():
     
     def add_window(self, window):
         self.window = window
+    
+    def add_pygame_gui_manager(self, manager):
+        self.manager = manager
         
-    def update_quiz(self):
+    def show_quiz(self):
         
         self.window.fill((255,255,255))
         
@@ -50,6 +53,13 @@ class World():
             self.current_scene = "result_scene"
 
         pygame.display.update()
+        
+    def _update_quiz(self):
+        self.current_quiz_num += 1
+        self._next_quiz_index = random.randint(0, len(self.quiz_data.content)-1)
+        self.next_quiz = self.quiz_data.content.iloc[self._next_quiz_index]
+        self.quiz_data.content = self.quiz_data.content.drop(index=[self._next_quiz_index]).reset_index(drop=True)
+    
     
     def handle_event(self):
         for event in pygame.event.get():
@@ -89,16 +99,27 @@ class World():
         
         self._update_quiz()
     
-    def _update_quiz(self):
-        self.current_quiz_num += 1
-        self._next_quiz_index = random.randint(0, len(self.quiz_df.content)-1)
-        self.next_quiz = self.quiz_df.content.iloc[self._next_quiz_index]
-        self.quiz_df.content = self.quiz_df.content.drop(index=[self._next_quiz_index]).reset_index(drop=True)
+    def process_choices(self):
+        if self.next_quiz["type"] == "4択":
+            message = ""
+            for choice in self.next_quiz["choices"]:
+                message += f"{choice}"
+            message = self.font.render(message, True, (10,10,10))
+            message_pos = message.get_rect(center = (config.SCREEN_SIZE[0]//2, config.SCREEN_SIZE[1]//2))
+            
+            self.window.blit(message, message_pos)
+
+        else:
+            pass
         
+    def _process_choices(self):
+        pass
+    
+    
     
     def show_start_screen(self):
         
-        self.quiz_df.content = self.quiz_df.origin_content.copy()
+        self.quiz_data.content = self.quiz_data.origin_content.copy()
         self.current_quiz_num = 0
         self.window.fill((255,255,255))
         message = self.font.render("エンターキーを押して!", True, (10,10,10))
@@ -149,7 +170,8 @@ class World():
     def process(self):
         if self.current_scene == "play_scene":
             self.handle_event()
-            self.update_quiz()
+            self.show_quiz()
+            self.process_choices()
 
         elif self.current_scene == "start_menu":
             self.show_start_screen()

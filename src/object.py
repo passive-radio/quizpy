@@ -25,4 +25,4 @@ class QuestionDataFrame:
     choices: choices of question, by default None.
     """
     content: pd.DataFrame()
-    
+    # origin_content: pd.DataFrame()
