@@ -103,14 +103,18 @@ class World():
         if self.next_quiz["type"] == "4択":
             message = ""
             for choice in self.next_quiz["choices"]:
-                message += f"{choice}"
+                message += f"{choice}, "
+            message = message[:-2]
             message = self.font.render(message, True, (10,10,10))
             message_pos = message.get_rect(center = (config.SCREEN_SIZE[0]//2, config.SCREEN_SIZE[1]//2))
             
             self.window.blit(message, message_pos)
-
+            
         else:
             pass
+        
+        pygame.display.flip()
+        pygame.display.update()
         
     def _process_choices(self):
         pass
