@@ -12,7 +12,7 @@ def init():
     """
     pygame.init()
     # pygame.display.set_icon()
-    pygame.display.set_caption("TEST")
+    pygame.display.set_caption("A simple quiz game")
     window = pygame.display.set_mode(config.SCREEN_SIZE)
     window.fill((255,255,255))
     
@@ -30,6 +30,10 @@ def main():
     world, window = init()
     clock = pygame.time.Clock()
     world.running = True
+    
+    """
+    ゲームをプレイするるーぷ　
+    """
     while world.running:
         world.process()
         clock.tick(config.FPS)
