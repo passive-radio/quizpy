@@ -14,6 +14,8 @@ class World():
         
         self.curernt_scene = "start_menu"
         self.current_quiz_num = 0
+        self.clock = pygame.time.Clock()
+        self.FPS = 60
     
     def add_quiz_data(self, quiz_data):
         self.quiz_data = quiz_data
@@ -101,14 +103,15 @@ class World():
     
     def process_choices(self):
         if self.next_quiz["type"] == "4択":
-            message = ""
-            for choice in self.next_quiz["choices"]:
-                message += f"{choice}, "
-            message = message[:-2]
-            message = self.font.render(message, True, (10,10,10))
-            message_pos = message.get_rect(center = (config.SCREEN_SIZE[0]//2, config.SCREEN_SIZE[1]//2))
+            self._process_choices()
+            # message = ""
+            # for choice in self.next_quiz["choices"]:
+            #     message += f"{choice}, "
+            # message = message[:-2]
+            # message = self.font.render(message, True, (10,10,10))
+            # message_pos = message.get_rect(center = (config.SCREEN_SIZE[0]//2, config.SCREEN_SIZE[1]//2))
             
-            self.window.blit(message, message_pos)
+            # self.window.blit(message, message_pos)
             
         else:
             pass
@@ -117,9 +120,19 @@ class World():
         pygame.display.update()
         
     def _process_choices(self):
+        buttons = []
+        for i,choice in enumerate(self.next_quiz["choices"]):
+            buttons.append(pygame_gui.elements.UIButton(pygame.Rect((350*(i+1), 275*(i+1)), (100, 50)),
+                            text=choice, manager=self.manager))
+            
         pass
     
     
+    def process_input(self):
+        pass
+
+    def _process_input(self):
+        pass
     
     def show_start_screen(self):
         
@@ -169,16 +182,24 @@ class World():
         self.window.blit(message, message_pos)
         pygame.display.flip()
         pygame.display.update()
+    
+    def render(self):
+        self.manager.update()
 
+        self.window.blit("", (0, 0))
+        self.manager.draw_ui(self.window)
         
     def process(self):
         if self.current_scene == "play_scene":
             self.handle_event()
             self.show_quiz()
             self.process_choices()
+            self.process_input()
+            self.render()
 
         elif self.current_scene == "start_menu":
             self.show_start_screen()
         
         elif self.current_scene == "result_scene":
             self.show_result()
+            

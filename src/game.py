@@ -21,6 +21,7 @@ def init():
     question_df = load_db("../data/qa.csv")
     world.add_quiz_data(question_df)
     world.add_scene_manager(SceneManager(world))
+    world.add_pygame_gui_manager()
     world.current_scene = "start_menu"
     return world, window
 
@@ -34,5 +35,6 @@ def main():
         world.process()
         clock.tick(config.FPS)
         
+    
 if __name__ == '__main__':
     main()
